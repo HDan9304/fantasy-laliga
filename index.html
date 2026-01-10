@@ -2,128 +2,203 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantasy La Liga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>M-League Fantasy</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f2f5; margin: 0; padding-bottom: 80px; }
+        /* --- GENERAL STYLES --- */
+        body { font-family: -apple-system, sans-serif; background: #1a1a1a; margin: 0; padding: 0; color: white; overflow-x: hidden; }
         
-        /* HEADER */
-        header { background: #37003c; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        h1 { margin: 0; font-size: 1.2rem; }
-        .stats { display: flex; justify-content: space-around; margin-top: 10px; font-size: 0.9rem; }
-        .stat-box span { font-weight: bold; color: #00ff87; }
-
-        /* PLAYER GRID */
-        .player-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; padding: 15px; }
-        
-        /* CARD DESIGN */
-        .card { 
-            background: white; padding: 10px; border-radius: 8px; text-align: center; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+        /* --- HEADER --- */
+        header { 
+            background: #0b0e1e; padding: 15px; border-bottom: 2px solid #e90052; 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100; 
         }
-        .card.selected { border-color: #00ff87; background-color: #e6fffa; opacity: 1; }
-        .card.disabled { opacity: 0.5; filter: grayscale(100%); }
+        .brand { font-weight: bold; font-size: 1.1rem; color: #e90052; } 
         
-        .pos-tag { font-size: 0.7rem; font-weight: bold; background: #eee; padding: 2px 5px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
-        .name { font-size: 0.9rem; font-weight: bold; margin: 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .price { color: #37003c; font-weight: bold; font-size: 0.85rem; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .budget-box { background: #333; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
+        .budget-val { color: #00ff87; font-weight: bold; }
+        
+        .logout-btn { background: none; border: 1px solid #555; color: #ccc; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
 
-        /* FOOTER MSG */
-        .msg { text-align: center; color: #666; font-size: 0.8rem; margin-top: 20px; }
+        /* --- THE PITCH (FIELD) --- */
+        .pitch-container {
+            background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 50%, #1b5e20 100%);
+            width: 100%; height: 620px;
+            position: relative; display: flex; flex-direction: column; justify-content: space-evenly;
+            padding: 20px 0; box-sizing: border-box; border-bottom: 5px solid #fff;
+        }
+        .pitch-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.3); }
+        .center-circle { position: absolute; top: 50%; left: 50%; width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; transform: translate(-50%, -50%); }
+
+        /* --- PLAYER SLOTS --- */
+        .row { display: flex; justify-content: space-evenly; align-items: center; z-index: 10; width: 100%; }
+        .slot { display: flex; flex-direction: column; align-items: center; width: 70px; cursor: pointer; }
+        
+        .shirt {
+            width: 40px; height: 40px; background: rgba(255,255,255,0.2);
+            border-radius: 50%; border: 2px solid #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; position: relative; transition: 0.2s;
+        }
+        .shirt.jdt { background: #002366; border-color: #ff0000; color: white; } 
+        .shirt.selangor { background: #ff0000; border-color: #ffeb3b; color: yellow; }
+        .shirt.terengganu { background: #fff; border-color: #000; color: black; }
+        .shirt.empty { background: rgba(0,0,0,0.3); border-color: #555; border-style: dashed; }
+
+        .player-name { background: #000; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-top: 4px; max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-price { font-size: 0.65rem; color: #ccc; }
+
+        /* --- POPUP MODAL --- */
+        #modal {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 70%;
+            background: #1a1a1a; border-radius: 20px 20px 0 0; border-top: 2px solid #e90052;
+            transition: 0.3s; z-index: 200; display: flex; flex-direction: column;
+        }
+        #modal.open { bottom: 0; }
+        
+        .modal-header { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #222; border-radius: 20px 20px 0 0; }
+        .modal-title { font-weight: bold; }
+        .close-btn { background: #333; color: white; border: none; padding: 5px 10px; border-radius: 5px; }
+        
+        .player-list { overflow-y: auto; flex: 1; padding: 10px; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; }
+        .btn-add { background: #e90052; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Fantasy La Liga</h1>
-        <div class="stats">
-            <div class="stat-box">Players: <span id="count">0</span>/11</div>
-            <div class="stat-box">Bank: €<span id="budget">100.0</span>m</div>
+        <div class="brand">M-LEAGUE</div>
+        <div class="header-right">
+            <div class="budget-box">€<span id="budget">100.0</span>m</div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </header>
 
-    <div class="player-list" id="app">
-        <p style="text-align:center; width:100%">Loading database...</p>
+    <div class="pitch-container">
+        <div class="pitch-line"></div>
+        <div class="center-circle"></div>
+
+        <div class="row">
+            <div class="slot" onclick="openPicker('GK', 0)"><div class="shirt empty" id="shirt-0">?</div><div class="player-name" id="name-0">GK</div><div class="player-price" id="price-0">-</div></div>
+        </div>
+        <div class="row">
+            <div class="slot" onclick="openPicker('DEF', 1)"><div class="shirt empty" id="shirt-1">+</div><div class="player-name" id="name-1">DEF</div><div class="player-price" id="price-1">-</div></div>
+            <div class="slot" onclick="openPicker('DEF', 2)"><div class="shirt empty" id="shirt-2">+</div><div class="player-name" id="name-2">DEF</div><div class="player-price" id="price-2">-</div></div>
+            <div class="slot" onclick="openPicker('DEF', 3)"><div class="shirt empty" id="shirt-3">+</div><div class="player-name" id="name-3">DEF</div><div class="player-price" id="price-3">-</div></div>
+            <div class="slot" onclick="openPicker('DEF', 4)"><div class="shirt empty" id="shirt-4">+</div><div class="player-name" id="name-4">DEF</div><div class="player-price" id="price-4">-</div></div>
+        </div>
+        <div class="row">
+            <div class="slot" onclick="openPicker('MID', 5)"><div class="shirt empty" id="shirt-5">+</div><div class="player-name" id="name-5">MID</div><div class="player-price" id="price-5">-</div></div>
+            <div class="slot" onclick="openPicker('MID', 6)"><div class="shirt empty" id="shirt-6">+</div><div class="player-name" id="name-6">MID</div><div class="player-price" id="price-6">-</div></div>
+            <div class="slot" onclick="openPicker('MID', 7)"><div class="shirt empty" id="shirt-7">+</div><div class="player-name" id="name-7">MID</div><div class="player-price" id="price-7">-</div></div>
+            <div class="slot" onclick="openPicker('MID', 8)"><div class="shirt empty" id="shirt-8">+</div><div class="player-name" id="name-8">MID</div><div class="player-price" id="price-8">-</div></div>
+        </div>
+        <div class="row">
+            <div class="slot" onclick="openPicker('FWD', 9)"><div class="shirt empty" id="shirt-9">+</div><div class="player-name" id="name-9">FWD</div><div class="player-price" id="price-9">-</div></div>
+            <div class="slot" onclick="openPicker('FWD', 10)"><div class="shirt empty" id="shirt-10">+</div><div class="player-name" id="name-10">FWD</div><div class="player-price" id="price-10">-</div></div>
+        </div>
     </div>
-    
-    <div class="msg" id="msg">Tap a player to select</div>
+
+    <div id="modal">
+        <div class="modal-header">
+            <div class="modal-title">Select Player</div>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+        <div class="player-list" id="picker-list"></div>
+    </div>
 
     <script>
-        let playersData = [];
-        let selectedIds = [];
-        let budget = 100.0;
-
-        // FETCH DATA
-        fetch('db.json')
-            .then(res => res.json())
-            .then(data => {
-                playersData = data;
-                renderPlayers();
-            });
-
-        function renderPlayers() {
-            const app = document.getElementById('app');
-            app.innerHTML = '';
-
-            playersData.forEach(p => {
-                const card = document.createElement('div');
-                card.className = `card ${selectedIds.includes(p.id) ? 'selected' : ''}`;
-                
-                // Color code positions
-                let posColor = "#eee";
-                if(p.position === "Goalkeeper") posColor = "#fff700"; 
-                if(p.position === "Defender") posColor = "#00ff87"; 
-                if(p.position === "Attacker") posColor = "#ff004c"; 
-                if(p.position === "Midfielder") posColor = "#00c3ff"; 
-
-                card.innerHTML = `
-                    <div class="pos-tag" style="background:${posColor}">${p.position.substring(0,3).toUpperCase()}</div>
-                    <div class="name">${p.name}</div>
-                    <div class="price">€${p.price}m</div>
-                `;
-
-                card.onclick = () => togglePlayer(p);
-                app.appendChild(card);
-            });
+        // --- 1. SECURITY CHECK (Runs Immediately) ---
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if (!user) {
+            window.location.href = "login.html"; // Kick out if no user
+        } else {
+            console.log("Welcome " + user.name);
         }
 
-        function togglePlayer(p) {
-            const index = selectedIds.indexOf(p.id);
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.reload();
+        }
 
-            // REMOVE PLAYER
-            if (index > -1) {
-                selectedIds.splice(index, 1);
-                budget += p.price;
-            } 
-            // ADD PLAYER
-            else {
-                if (selectedIds.length >= 11) {
-                    alert("Team full! Remove a player first.");
-                    return;
-                }
-                if (budget - p.price < 0) {
-                    alert("Too expensive! Not enough budget.");
-                    return;
-                }
-                selectedIds.push(p.id);
-                budget -= p.price;
+        // --- 2. GAME LOGIC ---
+        
+        // Mock Data for M-League (Replace with fetch('db.json') later)
+        const db = [
+            { id: 1, name: "Syihan Hazmi", team: "JDT", pos: "GK", price: 6.0 },
+            { id: 2, name: "Matt Davies", team: "JDT", pos: "DEF", price: 6.5 },
+            { id: 3, name: "Jordi Amat", team: "JDT", pos: "DEF", price: 6.0 },
+            { id: 4, name: "Arif Aiman", team: "JDT", pos: "MID", price: 9.0 },
+            { id: 5, name: "Bergson", team: "JDT", pos: "FWD", price: 10.0 },
+            { id: 6, name: "Khairulazhan", team: "Selangor", pos: "GK", price: 5.0 },
+            { id: 7, name: "Sharul Nazeem", team: "Selangor", pos: "DEF", price: 5.0 },
+            { id: 8, name: "Faisal Halim", team: "Selangor", pos: "MID", price: 8.5 },
+            { id: 9, name: "Mukhairi", team: "Selangor", pos: "MID", price: 5.5 },
+            { id: 10, name: "Ronnie", team: "Selangor", pos: "FWD", price: 7.5 },
+            { id: 11, name: "Safawi Rasid", team: "Terengganu", pos: "FWD", price: 6.5 },
+            { id: 12, name: "Akhyar", team: "Terengganu", pos: "MID", price: 6.0 }
+        ];
+
+        let currentSlotIndex = -1;
+        let userBudget = 100.0;
+
+        function openPicker(position, index) {
+            currentSlotIndex = index;
+            const list = document.getElementById('picker-list');
+            list.innerHTML = ''; 
+
+            const candidates = db.filter(p => p.pos === position);
+
+            candidates.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-weight:bold">${p.name}</div>
+                        <div style="font-size:0.8rem; color:#888">${p.team} • €${p.price}m</div>
+                    </div>
+                    <button class="btn-add" onclick="selectPlayer(${p.id})">Add</button>
+                `;
+                list.appendChild(div);
+            });
+            document.getElementById('modal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('open');
+        }
+
+        function selectPlayer(id) {
+            const player = db.find(p => p.id === id);
+            
+            if(userBudget - player.price < 0) {
+                alert("Too expensive!");
+                return;
             }
 
-            // Update UI
-            document.getElementById('count').innerText = selectedIds.length;
-            document.getElementById('budget').innerText = budget.toFixed(1);
-            renderPlayers(); // Re-draw cards to show selection
+            userBudget -= player.price;
+            document.getElementById('budget').innerText = userBudget.toFixed(1);
+
+            // Update Shirt
+            const shirtEl = document.getElementById(`shirt-${currentSlotIndex}`);
+            const nameEl = document.getElementById(`name-${currentSlotIndex}`);
+            const priceEl = document.getElementById(`price-${currentSlotIndex}`);
+
+            shirtEl.className = 'shirt'; 
+            if(player.team === 'JDT') shirtEl.classList.add('jdt');
+            if(player.team === 'Selangor') shirtEl.classList.add('selangor');
+            if(player.team === 'Terengganu') shirtEl.classList.add('terengganu');
+            
+            shirtEl.innerText = player.name.charAt(0);
+            nameEl.innerText = player.name;
+            priceEl.innerText = player.price + 'm';
+
+            closeModal();
         }
     </script>
-
-// --- SECURITY CHECK (Paste at top of Script) ---
-const user = JSON.parse(localStorage.getItem('user'));
-
-if (!user) {
-    // If not logged in, kick to login page
-    window.location.href = "login.html";
-} 
-// ----------------------------------------------
-
 </body>
 </html>
