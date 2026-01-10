@@ -1,0 +1,250 @@
+[
+  {
+    "id": 543468,
+    "name": "Eder Aller",
+    "team": "Barcelona",
+    "position": "Goalkeeper",
+    "price": 4.5,
+    "total_points": 0
+  },
+  {
+    "id": 182718,
+    "name": "Joan Garc\u00eda",
+    "team": "Barcelona",
+    "position": "Goalkeeper",
+    "price": 4.5,
+    "total_points": 0
+  },
+  {
+    "id": 383647,
+    "name": "D. Kochen",
+    "team": "Barcelona",
+    "position": "Goalkeeper",
+    "price": 4.5,
+    "total_points": 0
+  },
+  {
+    "id": 851,
+    "name": "W. Szcz\u0119sny",
+    "team": "Barcelona",
+    "position": "Goalkeeper",
+    "price": 4.5,
+    "total_points": 0
+  },
+  {
+    "id": 127,
+    "name": "M. ter Stegen",
+    "team": "Barcelona",
+    "position": "Goalkeeper",
+    "price": 4.5,
+    "total_points": 0
+  },
+  {
+    "id": 101814,
+    "name": "R. Ara\u00fajo",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 161928,
+    "name": "Alejandro Balde",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 2282,
+    "name": "A. Christensen",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 396623,
+    "name": "Pau Cubars\u00ed Paredes",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 568001,
+    "name": "X. Espart",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 619,
+    "name": "Eric Garc\u00eda",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 1257,
+    "name": "J. Kound\u00e9",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 181701,
+    "name": "Gerard Mart\u00edn",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 491250,
+    "name": "Jofre Torrents",
+    "team": "Barcelona",
+    "position": "Defender",
+    "price": 5.0,
+    "total_points": 0
+  },
+  {
+    "id": 433396,
+    "name": "Marc Bernal",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 329728,
+    "name": "Marc Casad\u00f3",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 340626,
+    "name": "Ferm\u00edn",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 491087,
+    "name": "Pedro Ferna\u0301ndez",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 296667,
+    "name": "Gavi",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 491086,
+    "name": "Tom\u00e1s Marqu\u00e9s",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 1323,
+    "name": "Dani Olmo",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 133609,
+    "name": "Pedri",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 538,
+    "name": "F. de Jong",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 338958,
+    "name": "R. Bardghji",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 445973,
+    "name": "Toni Fern\u00e1ndez",
+    "team": "Barcelona",
+    "position": "Attacker",
+    "price": 8.0,
+    "total_points": 0
+  },
+  {
+    "id": 579244,
+    "name": "Juan Hern\u00e1ndez",
+    "team": "Barcelona",
+    "position": "Attacker",
+    "price": 8.0,
+    "total_points": 0
+  },
+  {
+    "id": 386828,
+    "name": "Lamine Yamal",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 521,
+    "name": "R. Lewandowski",
+    "team": "Barcelona",
+    "position": "Attacker",
+    "price": 8.0,
+    "total_points": 0
+  },
+  {
+    "id": 1496,
+    "name": "Raphinha",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 909,
+    "name": "M. Rashford",
+    "team": "Barcelona",
+    "position": "Midfielder",
+    "price": 6.5,
+    "total_points": 0
+  },
+  {
+    "id": 931,
+    "name": "Ferran Torres",
+    "team": "Barcelona",
+    "position": "Attacker",
+    "price": 8.0,
+    "total_points": 0
+  }
+]
