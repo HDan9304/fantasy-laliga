@@ -87,7 +87,7 @@
                     }, 1500);
                 })
                 .catch((error) => {
-                    console.error(error);
+                    alert(error.message);
                     statusEl.style.color = "#ff4d4d";
                     statusEl.innerText = "Login Failed. Try again.";
                 });
