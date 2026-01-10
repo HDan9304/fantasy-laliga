@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy La Liga</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #37003c; } /* La Liga Purple */
+        
+        /* Player Card Style */
+        .player-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+        .card { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            border: 2px solid transparent;
+        }
+        .card.selected { border-color: #00ff87; background-color: #e6fffa; } /* FPL Green */
+        
+        .pos { font-size: 0.8em; color: #666; font-weight: bold; }
+        .name { font-weight: bold; margin: 5px 0; }
+        .price { background: #37003c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.9em; }
+        .btn { display: block; width: 100%; padding: 10px; background: #00ff87; border: none; font-weight: bold; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>🇪🇸 Fantasy La Liga</h1>
+    <p style="text-align:center">Budget: <span id="budget">100.0</span>m</p>
+
+    <div class="player-list" id="app">
+        <p>Loading players...</p>
+    </div>
+
+    <script>
+        // 1. Fetch the Database
+        fetch('db.json')
+            .then(response => response.json())
+            .then(players => {
+                const app = document.getElementById('app');
+                app.innerHTML = ''; // Clear loading text
+
+                // 2. Loop through players and create HTML
+                players.forEach(player => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="pos">${player.position}</div>
+                        <div class="name">${player.name}</div>
+                        <div class="price">€${player.price}m</div>
+                    `;
+                    
+                    // Add click event (Basic selection logic)
+                    card.onclick = () => {
+                        card.classList.toggle('selected');
+                    };
+
+                    app.appendChild(card);
+                });
+            })
+            .catch(err => {
+                document.getElementById('app').innerHTML = 'Error loading db.json. Make sure the file exists!';
+                console.error(err);
+            });
+    </script>
+
+</body>
+</html>
