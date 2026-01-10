@@ -116,5 +116,14 @@
         }
     </script>
 
+// --- SECURITY CHECK (Paste at top of Script) ---
+const user = JSON.parse(localStorage.getItem('user'));
+
+if (!user) {
+    // If not logged in, kick to login page
+    window.location.href = "login.html";
+} 
+// ----------------------------------------------
+
 </body>
 </html>
