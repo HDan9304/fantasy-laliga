@@ -2,203 +2,165 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>M-League Fantasy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Move Helper</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    
     <style>
-        /* --- GENERAL STYLES --- */
-        body { font-family: -apple-system, sans-serif; background: #1a1a1a; margin: 0; padding: 0; color: white; overflow-x: hidden; }
-        
-        /* --- HEADER --- */
-        header { 
-            background: #0b0e1e; padding: 15px; border-bottom: 2px solid #e90052; 
-            display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 100; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
         }
-        .brand { font-weight: bold; font-size: 1.1rem; color: #e90052; } 
+        h1 { margin-bottom: 5px; }
+        p { color: #aaaaaa; margin-bottom: 20px; }
         
-        .header-right { display: flex; align-items: center; gap: 10px; }
-        .budget-box { background: #333; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
-        .budget-val { color: #00ff87; font-weight: bold; }
-        
-        .logout-btn { background: none; border: 1px solid #555; color: #ccc; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
-
-        /* --- THE PITCH (FIELD) --- */
-        .pitch-container {
-            background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 50%, #1b5e20 100%);
-            width: 100%; height: 620px;
-            position: relative; display: flex; flex-direction: column; justify-content: space-evenly;
-            padding: 20px 0; box-sizing: border-box; border-bottom: 5px solid #fff;
+        #board-container {
+            width: 400px;
+            margin: 0 auto 20px;
+            border: 4px solid #444;
+            border-radius: 4px;
         }
-        .pitch-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.3); }
-        .center-circle { position: absolute; top: 50%; left: 50%; width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; transform: translate(-50%, -50%); }
-
-        /* --- PLAYER SLOTS --- */
-        .row { display: flex; justify-content: space-evenly; align-items: center; z-index: 10; width: 100%; }
-        .slot { display: flex; flex-direction: column; align-items: center; width: 70px; cursor: pointer; }
         
-        .shirt {
-            width: 40px; height: 40px; background: rgba(255,255,255,0.2);
-            border-radius: 50%; border: 2px solid #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; position: relative; transition: 0.2s;
+        .controls { margin-bottom: 20px; }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.2s;
         }
-        .shirt.jdt { background: #002366; border-color: #ff0000; color: white; } 
-        .shirt.selangor { background: #ff0000; border-color: #ffeb3b; color: yellow; }
-        .shirt.terengganu { background: #fff; border-color: #000; color: black; }
-        .shirt.empty { background: rgba(0,0,0,0.3); border-color: #555; border-style: dashed; }
-
-        .player-name { background: #000; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-top: 4px; max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-price { font-size: 0.65rem; color: #ccc; }
-
-        /* --- POPUP MODAL --- */
-        #modal {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 70%;
-            background: #1a1a1a; border-radius: 20px 20px 0 0; border-top: 2px solid #e90052;
-            transition: 0.3s; z-index: 200; display: flex; flex-direction: column;
+        
+        button:hover { background-color: #45a049; }
+        #suggestBtn { background-color: #008CBA; }
+        #suggestBtn:hover { background-color: #007399; }
+        
+        #status {
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 10px;
+            color: #ffcc00;
         }
-        #modal.open { bottom: 0; }
-        
-        .modal-header { padding: 15px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; background: #222; border-radius: 20px 20px 0 0; }
-        .modal-title { font-weight: bold; }
-        .close-btn { background: #333; color: white; border: none; padding: 5px 10px; border-radius: 5px; }
-        
-        .player-list { overflow-y: auto; flex: 1; padding: 10px; }
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; }
-        .btn-add { background: #e90052; color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand">M-LEAGUE</div>
-        <div class="header-right">
-            <div class="budget-box">€<span id="budget">100.0</span>m</div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
-        </div>
-    </header>
+    <h1>Chess Move Helper</h1>
+    <p>Drag and drop pieces to play. Click "Suggest Move" for a hint!</p>
 
-    <div class="pitch-container">
-        <div class="pitch-line"></div>
-        <div class="center-circle"></div>
-
-        <div class="row">
-            <div class="slot" onclick="openPicker('GK', 0)"><div class="shirt empty" id="shirt-0">?</div><div class="player-name" id="name-0">GK</div><div class="player-price" id="price-0">-</div></div>
-        </div>
-        <div class="row">
-            <div class="slot" onclick="openPicker('DEF', 1)"><div class="shirt empty" id="shirt-1">+</div><div class="player-name" id="name-1">DEF</div><div class="player-price" id="price-1">-</div></div>
-            <div class="slot" onclick="openPicker('DEF', 2)"><div class="shirt empty" id="shirt-2">+</div><div class="player-name" id="name-2">DEF</div><div class="player-price" id="price-2">-</div></div>
-            <div class="slot" onclick="openPicker('DEF', 3)"><div class="shirt empty" id="shirt-3">+</div><div class="player-name" id="name-3">DEF</div><div class="player-price" id="price-3">-</div></div>
-            <div class="slot" onclick="openPicker('DEF', 4)"><div class="shirt empty" id="shirt-4">+</div><div class="player-name" id="name-4">DEF</div><div class="player-price" id="price-4">-</div></div>
-        </div>
-        <div class="row">
-            <div class="slot" onclick="openPicker('MID', 5)"><div class="shirt empty" id="shirt-5">+</div><div class="player-name" id="name-5">MID</div><div class="player-price" id="price-5">-</div></div>
-            <div class="slot" onclick="openPicker('MID', 6)"><div class="shirt empty" id="shirt-6">+</div><div class="player-name" id="name-6">MID</div><div class="player-price" id="price-6">-</div></div>
-            <div class="slot" onclick="openPicker('MID', 7)"><div class="shirt empty" id="shirt-7">+</div><div class="player-name" id="name-7">MID</div><div class="player-price" id="price-7">-</div></div>
-            <div class="slot" onclick="openPicker('MID', 8)"><div class="shirt empty" id="shirt-8">+</div><div class="player-name" id="name-8">MID</div><div class="player-price" id="price-8">-</div></div>
-        </div>
-        <div class="row">
-            <div class="slot" onclick="openPicker('FWD', 9)"><div class="shirt empty" id="shirt-9">+</div><div class="player-name" id="name-9">FWD</div><div class="player-price" id="price-9">-</div></div>
-            <div class="slot" onclick="openPicker('FWD', 10)"><div class="shirt empty" id="shirt-10">+</div><div class="player-name" id="name-10">FWD</div><div class="player-price" id="price-10">-</div></div>
-        </div>
+    <div class="controls">
+        <button id="startBtn">Reset Game</button>
+        <button id="suggestBtn">Suggest a Move</button>
     </div>
 
-    <div id="modal">
-        <div class="modal-header">
-            <div class="modal-title">Select Player</div>
-            <button class="close-btn" onclick="closeModal()">Close</button>
-        </div>
-        <div class="player-list" id="picker-list"></div>
+    <div id="board-container">
+        <div id="myBoard"></div>
     </div>
+    
+    <div id="status">White to move</div>
+
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
     <script>
-        // --- 1. SECURITY CHECK (Runs Immediately) ---
-        const user = JSON.parse(localStorage.getItem('user'));
-        
-        if (!user) {
-            window.location.href = "login.html"; // Kick out if no user
-        } else {
-            console.log("Welcome " + user.name);
+        // Initialize variables
+        var board = null;
+        var game = new Chess();
+        var $status = $('#status');
+
+        // Prevent picking up pieces if the game is over or it's not that side's turn
+        function onDragStart (source, piece, position, orientation) {
+            if (game.game_over()) return false;
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
+            }
         }
 
-        function logout() {
-            localStorage.removeItem('user');
-            window.location.reload();
-        }
-
-        // --- 2. GAME LOGIC ---
-        
-        // Mock Data for M-League (Replace with fetch('db.json') later)
-        const db = [
-            { id: 1, name: "Syihan Hazmi", team: "JDT", pos: "GK", price: 6.0 },
-            { id: 2, name: "Matt Davies", team: "JDT", pos: "DEF", price: 6.5 },
-            { id: 3, name: "Jordi Amat", team: "JDT", pos: "DEF", price: 6.0 },
-            { id: 4, name: "Arif Aiman", team: "JDT", pos: "MID", price: 9.0 },
-            { id: 5, name: "Bergson", team: "JDT", pos: "FWD", price: 10.0 },
-            { id: 6, name: "Khairulazhan", team: "Selangor", pos: "GK", price: 5.0 },
-            { id: 7, name: "Sharul Nazeem", team: "Selangor", pos: "DEF", price: 5.0 },
-            { id: 8, name: "Faisal Halim", team: "Selangor", pos: "MID", price: 8.5 },
-            { id: 9, name: "Mukhairi", team: "Selangor", pos: "MID", price: 5.5 },
-            { id: 10, name: "Ronnie", team: "Selangor", pos: "FWD", price: 7.5 },
-            { id: 11, name: "Safawi Rasid", team: "Terengganu", pos: "FWD", price: 6.5 },
-            { id: 12, name: "Akhyar", team: "Terengganu", pos: "MID", price: 6.0 }
-        ];
-
-        let currentSlotIndex = -1;
-        let userBudget = 100.0;
-
-        function openPicker(position, index) {
-            currentSlotIndex = index;
-            const list = document.getElementById('picker-list');
-            list.innerHTML = ''; 
-
-            const candidates = db.filter(p => p.pos === position);
-
-            candidates.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `
-                    <div>
-                        <div style="font-weight:bold">${p.name}</div>
-                        <div style="font-size:0.8rem; color:#888">${p.team} • €${p.price}m</div>
-                    </div>
-                    <button class="btn-add" onclick="selectPlayer(${p.id})">Add</button>
-                `;
-                list.appendChild(div);
+        // Validate the move when a piece is dropped
+        function onDrop (source, target) {
+            var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // Always promote to a queen for simplicity
             });
-            document.getElementById('modal').classList.add('open');
+
+            // If illegal move, snap the piece back
+            if (move === null) return 'snapback';
+
+            updateStatus();
         }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('open');
+        // Update the board position after the piece snap animation
+        function onSnapEnd () {
+            board.position(game.fen());
         }
 
-        function selectPlayer(id) {
-            const player = db.find(p => p.id === id);
-            
-            if(userBudget - player.price < 0) {
-                alert("Too expensive!");
+        // Update the status text below the board
+        function updateStatus () {
+            var statusHTML = '';
+            var moveColor = (game.turn() === 'w') ? 'White' : 'Black';
+
+            if (game.in_checkmate()) {
+                statusHTML = 'Game over, ' + moveColor + ' is in checkmate.';
+            } else if (game.in_draw()) {
+                statusHTML = 'Game over, drawn position';
+            } else {
+                statusHTML = moveColor + ' to move';
+                if (game.in_check()) {
+                    statusHTML += ', ' + moveColor + ' is in check!';
+                }
+            }
+            $status.html(statusHTML);
+        }
+
+        // Configure the chessboard
+        var config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            // Fetch piece images directly from chessboardjs servers so it works instantly on GitHub
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        };
+        
+        board = Chessboard('myBoard', config);
+        updateStatus();
+
+        // Button functionality: Reset
+        $('#startBtn').on('click', function() {
+            game.reset();
+            board.start();
+            updateStatus();
+        });
+
+        // Button functionality: Move Helper
+        $('#suggestBtn').on('click', function() {
+            if (game.game_over()) {
+                alert("The game is already over!");
                 return;
             }
-
-            userBudget -= player.price;
-            document.getElementById('budget').innerText = userBudget.toFixed(1);
-
-            // Update Shirt
-            const shirtEl = document.getElementById(`shirt-${currentSlotIndex}`);
-            const nameEl = document.getElementById(`name-${currentSlotIndex}`);
-            const priceEl = document.getElementById(`price-${currentSlotIndex}`);
-
-            shirtEl.className = 'shirt'; 
-            if(player.team === 'JDT') shirtEl.classList.add('jdt');
-            if(player.team === 'Selangor') shirtEl.classList.add('selangor');
-            if(player.team === 'Terengganu') shirtEl.classList.add('terengganu');
             
-            shirtEl.innerText = player.name.charAt(0);
-            nameEl.innerText = player.name;
-            priceEl.innerText = player.price + 'm';
-
-            closeModal();
-        }
+            // Get all legal moves
+            var moves = game.moves();
+            
+            // For now, this helper picks a random legal move. 
+            var randomMove = moves[Math.floor(Math.random() * moves.length)];
+            
+            alert("Suggestion: You should play " + randomMove);
+        });
     </script>
 </body>
 </html>
