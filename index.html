@@ -3,192 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Move Helper</title>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-    
+    <title>F1 // NEXUS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;700;900&family=Space+Grotesk:wght@300;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --f1-red: #ff1801;
+            --f1-white: #ffffff;
+            --f1-black: #0b0b0e;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --f1-font: 'Outfit', sans-serif;
+        }
+
+        /* The "Modern" F1 Font Setup */
+        @font-face {
+            font-family: 'F1-Wide';
+            src: local('Formula1-Wide'), local('F1-Wide'); /* Use if you have it locally */
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            background-color: #2b2b2b;
-            color: #ffffff;
+            background-color: var(--f1-black);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 24, 1, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 24, 1, 0.03) 0%, transparent 40%);
+            color: var(--f1-white);
+            font-family: var(--f1-font);
             margin: 0;
-            padding: 20px;
+            overflow-x: hidden;
         }
-        h1 { margin-bottom: 5px; }
-        p { color: #aaaaaa; margin-bottom: 20px; }
-        
-        #board-container {
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            margin: 0 auto 20px;
-            border: 4px solid #444;
-            border-radius: 4px;
+
+        /* Floating Modern Header */
+        header {
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .controls { margin-bottom: 20px; }
-        
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.2s;
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            font-style: italic; /* Mimics the leaning F1 speed */
         }
-        
-        button:hover { background-color: #45a049; }
-        #suggestBtn { background-color: #008CBA; }
-        #suggestBtn:hover { background-color: #007399; }
-        
-        #status {
-            font-weight: bold;
-            font-size: 20px;
-            margin-top: 10px;
-            color: #ffcc00;
+
+        .logo span { color: var(--f1-red); }
+
+        /* Modern Grid Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
-        .highlight-square {
-            box-shadow: inset 0 0 3px 3px yellow;
+
+        /* Glassmorphic Card */
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 4px; /* Sharper, more industrial */
+            grid-column: span 4;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
+        .card:hover {
+            border-color: var(--f1-red);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 24, 1, 0.1);
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0;
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 0 15px 15px 0;
+            border-color: transparent var(--f1-red) transparent transparent;
+        }
+
+        /* Typography accents */
+        .label {
+            font-family: 'Space Grotesk', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--f1-red);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        /* Live Indicator */
+        .live-tag {
+            background: var(--f1-red);
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            border-radius: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+                /* Span adjustments for variety */
+        .large { grid-column: span 8; }
+        .small { grid-column: span 4; }
+
+        /* Responsive design for auto-refitting screen sizes */
+        @media (max-width: 992px) {
+            .large { grid-column: span 12; }
+            .small { grid-column: span 6; }
+        }
+
+        @media (max-width: 600px) {
+            .small { grid-column: span 12; }
+            header { flex-direction: column; gap: 15px; padding: 20px; }
+            .dashboard { padding: 20px; gap: 15px; }
+        }
+
     </style>
 </head>
 <body>
 
-    <h1>Chess Move Helper</h1>
-    <p>Drag and drop pieces to play. Click "Suggest Move" for a hint!</p>
+    <header>
+        <div class="logo">FORMULA <span>1</span> // NEXUS</div>
+        <div class="live-tag">LIVE DATA FEED</div>
+    </header>
 
-    <div class="controls">
-        <button id="startBtn">Reset Game</button>
-        <button id="suggestBtn">Suggest a Move</button>
-    </div>
+    <main class="dashboard">
+        
+        <div class="card large">
+            <span class="label">Current Grand Prix</span>
+            <div class="value">MELBOURNE</div>
+            <p style="opacity: 0.6;">Albert Park • Session: FP1 underway</p>
+            <div style="margin-top: 30px; display: flex; gap: 20px;">
+                                <div>
+                    <span class="label">Track Temp</span>
+                    <div id="track-temp" style="font-size: 1.5rem; font-weight: 700;">34.2°C</div>
+                </div>
+                <div>
+                    <span class="label">Air Temp</span>
+                    <div id="air-temp" style="font-size: 1.5rem; font-weight: 700;">22.1°C</div>
+                </div>
+            </div>
+        </div>
 
-    <div id="board-container">
-        <div id="myBoard"></div>
-    </div>
-    
-    <div id="status">White to move</div>
+                <div class="card small">
+            <span class="label">Current Leader</span>
+            <div id="leader-name" class="value">VER</div>
+            <p>Red Bull Racing • <span id="leader-time">1:18.422</span></p>
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <span>2. LEC</span>
+                <span style="color: var(--f1-red);">+0.045s</span>
+            </div>
+        </div>
 
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+                <div class="card small">
+            <span class="label">Top Speed (KPH)</span>
+            <div id="top-speed" class="value">334</div>
+            <p style="opacity: 0.6;">Recorded at Turn 11</p>
+        </div>
 
-    <script>
-        // Initialize variables
-        var board = null;
-        var game = new Chess();
-        var $status = $('#status');
+        </main>
 
-        function removeHighlights() {
-            $('.highlight-square').removeClass('highlight-square');
-        }
-
-        // Prevent picking up pieces if the game is over or it's not that side's turn
-        function onDragStart (source, piece, position, orientation) {
-            if (game.game_over()) return false;
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                return false;
-            }
-        }
-
-        // Validate the move when a piece is dropped
-        function onDrop (source, target) {
-            removeHighlights();
-            var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // Always promote to a queen for simplicity
-            });
-
-            // If illegal move, snap the piece back
-            if (move === null) return 'snapback';
-
-            updateStatus();
-        }
-
-        // Update the board position after the piece snap animation
-        function onSnapEnd () {
-            board.position(game.fen());
-        }
-
-        // Update the status text below the board
-        function updateStatus () {
-            var statusHTML = '';
-            var moveColor = (game.turn() === 'w') ? 'White' : 'Black';
-
-            if (game.in_checkmate()) {
-                statusHTML = 'Game over, ' + moveColor + ' is in checkmate.';
-            } else if (game.in_draw()) {
-                statusHTML = 'Game over, drawn position';
-            } else {
-                statusHTML = moveColor + ' to move';
-                if (game.in_check()) {
-                    statusHTML += ', ' + moveColor + ' is in check!';
+        <script>
+        // Fetch real live or latest session data from OpenF1 API
+        async function fetchLiveF1Data() {
+            try {
+                // Fetch Latest Weather (Temperatures)
+                const weatherRes = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
+                const weatherData = await weatherRes.json();
+                if (weatherData.length > 0) {
+                    const latestWeather = weatherData[weatherData.length - 1];
+                    document.getElementById('track-temp').innerText = latestWeather.track_temperature + '°C';
+                    document.getElementById('air-temp').innerText = latestWeather.air_temperature + '°C';
                 }
+
+                // Fetch Latest Telemetry (Speed) - Using Max Verstappen (Driver 1)
+                const carRes = await fetch('https://api.openf1.org/v1/car_data?session_key=latest&driver_number=1');
+                const carData = await carRes.json();
+                if (carData.length > 0) {
+                    const latestTelemetry = carData[carData.length - 1];
+                    document.getElementById('top-speed').innerText = latestTelemetry.speed;
+                }
+            } catch (error) {
+                console.error("Error fetching live F1 data:", error);
             }
-            $status.html(statusHTML);
         }
 
-        // Configure the chessboard
-        var config = {
-            draggable: true,
-            position: 'start',
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            onSnapEnd: onSnapEnd,
-            // Fetch piece images directly from chessboardjs servers so it works instantly on GitHub
-            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
-        };
-        
-        board = Chessboard('myBoard', config);
-        updateStatus();
-        
-        // Make the board recalculate its size when the screen resizes
-        $(window).resize(board.resize);
-
-        // Button functionality: Reset
-        $('#startBtn').on('click', function() {
-            game.reset();
-            board.start();
-            removeHighlights();
-            updateStatus();
-        });
-
-        // Button functionality: Move Helper
-        $('#suggestBtn').on('click', function() {
-            if (game.game_over()) {
-                alert("The game is already over!");
-                return;
-            }
-            
-            // Use Stockfish AI to get the best move
-            var btn = $(this);
-            btn.text('Thinking...').prop('disabled', true);
-
-            fetch('https://chess-api.com/v1', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fen: game.fen(), depth: 8 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                removeHighlights();
-                $('#myBoard .square-' + data.from).addClass('highlight-square');
-                $('#myBoard .square-' + data.to).addClass('highlight-square');
-                btn.text('Suggest a Move').prop('disabled', false);
-            })
-            .catch(err => {
-                alert("Error connecting to AI.");
-                btn.text('Suggest a Move').prop('disabled', false);
-            });
-        });
+        // Fetch immediately on load, then update every 10 seconds to avoid API rate limits
+        fetchLiveF1Data();
+        setInterval(fetchLiveF1Data, 10000); 
     </script>
 </body>
 </html>
